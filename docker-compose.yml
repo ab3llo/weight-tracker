@@ -1,0 +1,41 @@
+version: '3.3'
+services:
+  database:
+    image: postgres:alpine
+    container_name: weight-tracker-db 
+    environment:
+      - DATABASE_HOST=127.0.0.1
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=root  
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+      - ./scripts/sql/init.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+    networks:
+      - weight_tracker
+  weight-service:
+    container_name: weight-tracker-service
+    build: .
+    environment:
+      DB_USER: weight_ad
+      DB_PASSWORD: password
+      DB_NAME: weight_tracker
+      DB_HOST: database
+      DB_PORT: 5432
+    ports:
+      - 8080:8080
+    restart: on-failure
+    volumes:
+      - weight-service:/user/scr/app
+    depends_on:
+      - database
+    networks:
+      - weight_tracker
+volumes:
+  weight-service:
+  database_postgres:
+networks:
+  weight_tracker:
+    driver: bridge
