@@ -18,6 +18,6 @@ func main() {
 	// Set up routes
 	router.SetupRoutes(app)
 
-	// Listen on PORT 3000
+	// Listen on PORT
 	app.Listen(":" + cfg.Port)
 }
